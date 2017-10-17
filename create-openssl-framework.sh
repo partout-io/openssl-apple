@@ -26,12 +26,12 @@ function check_bitcode() {
     FRAMEWORK_NAME=${FRAMEWORK_NAME%.framework}
 
     if [[ TYPE == "static" ]]; then
-        BITCODE_PATTEN=__bitcode
+        BITCODE_PATTERN=__bitcode
     else
-        BITCODE_PATTEN=__LLVM
+        BITCODE_PATTERN=__LLVM
     fi
 
-    if otool -arch arm64 -l "${FRAMEWORK}/${FRAMEWORK_NAME}" | grep -q "${BITCODE_PATTEN}"; then
+    if otool -arch arm64 -l "${FRAMEWORK}/${FRAMEWORK_NAME}" | grep -q "${BITCODE_PATTERN}"; then
         echo "INFO: $FRAMEWORK contains Bitcode"
     else
         echo "INFO: $FRAMEWORK doesn't contain Bitcode"
