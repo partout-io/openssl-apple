@@ -91,7 +91,7 @@ if [ $FWTYPE == "dynamic" ]; then
             -compatibility_version $COMPAT_VERSION \
             -current_version $CURRENT_VERSION \
             -application_extension \
-            -dylib_install_name $INSTALL_NAME \
+            -install_name $INSTALL_NAME \
             -o $FWNAME.dylib
             #install_name_tool -id $INSTALL_NAME $FWNAME.dylib
 
