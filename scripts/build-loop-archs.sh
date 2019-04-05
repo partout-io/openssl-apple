@@ -26,6 +26,8 @@ do
     SDKVERSION=${TVOS_SDKVERSION}
   elif [[ "$ARCH" == mac* ]]; then
     SDKVERSION=${MACOS_SDKVERSION}
+  elif [[ "$ARCH" == watchos* ]]; then
+    SDKVERSION=${WATCHOS_SDKVERSION}
   else
     SDKVERSION=${IOS_SDKVERSION}
   fi
@@ -39,6 +41,8 @@ do
     PLATFORM="AppleTVOS"
   elif [[ "${ARCH}" == "mac_x86_64" || "${ARCH}" == "mac_i386" ]]; then
     PLATFORM="MacOSX"
+elif [[ "${ARCH}" == "watchos_arm64_32" || "${ARCH}" == "watchos_armv7k" ]]; then
+    PLATFORM="WatchOS"
   else
     PLATFORM="iPhoneOS"
   fi
@@ -65,11 +69,8 @@ do
     esac
   fi
 
-  # Embed bitcode for SDK >= 9
   if [ "${CONFIG_DISABLE_BITCODE}" != "true" ]; then
-    if [[ "${SDKVERSION}" == 9.* || "${SDKVERSION}" == [0-9][0-9].* ]]; then
       LOCAL_CONFIG_OPTIONS="${LOCAL_CONFIG_OPTIONS} -fembed-bitcode"
-    fi
   fi
 
   # Add platform specific config options
@@ -77,6 +78,10 @@ do
     LOCAL_CONFIG_OPTIONS="${LOCAL_CONFIG_OPTIONS} -DHAVE_FORK=0 -mtvos-version-min=${TVOS_MIN_SDK_VERSION}"
     echo "  Patching Configure..."
     LC_ALL=C sed -i -- 's/D\_REENTRANT\:iOS/D\_REENTRANT\:tvOS/' "./Configure"
+  if [[ "${PLATFORM}" == WatchOS* ]]; then
+    LOCAL_CONFIG_OPTIONS="${LOCAL_CONFIG_OPTIONS} -DHAVE_FORK=0 -mwatchos-version-min=${WATCHOS_MIN_SDK_VERSION}"
+    echo "  Patching Configure..."
+    LC_ALL=C sed -i -- 's/D\_REENTRANT\:iOS/D\_REENTRANT\:WatchOS/' "./Configure"
   elif [[ "${PLATFORM}" == MacOSX* ]]; then
     LOCAL_CONFIG_OPTIONS="${LOCAL_CONFIG_OPTIONS} -mmacosx-version-min=${MACOS_MIN_SDK_VERSION}"
   else
