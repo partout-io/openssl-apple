@@ -41,7 +41,7 @@ do
     PLATFORM="AppleTVOS"
   elif [[ "${ARCH}" == "mac_x86_64" || "${ARCH}" == "mac_i386" ]]; then
     PLATFORM="MacOSX"
-elif [[ "${ARCH}" == "watchos_arm64_32" || "${ARCH}" == "watchos_armv7k" ]]; then
+  elif [[ "${ARCH}" == "watchos_arm64_32" || "${ARCH}" == "watchos_armv7k" ]]; then
     PLATFORM="WatchOS"
   else
     PLATFORM="iPhoneOS"
@@ -78,7 +78,7 @@ elif [[ "${ARCH}" == "watchos_arm64_32" || "${ARCH}" == "watchos_armv7k" ]]; the
     LOCAL_CONFIG_OPTIONS="${LOCAL_CONFIG_OPTIONS} -DHAVE_FORK=0 -mtvos-version-min=${TVOS_MIN_SDK_VERSION}"
     echo "  Patching Configure..."
     LC_ALL=C sed -i -- 's/D\_REENTRANT\:iOS/D\_REENTRANT\:tvOS/' "./Configure"
-  if [[ "${PLATFORM}" == WatchOS* ]]; then
+  elif [[ "${PLATFORM}" == WatchOS* ]]; then
     LOCAL_CONFIG_OPTIONS="${LOCAL_CONFIG_OPTIONS} -DHAVE_FORK=0 -mwatchos-version-min=${WATCHOS_MIN_SDK_VERSION}"
     echo "  Patching Configure..."
     LC_ALL=C sed -i -- 's/D\_REENTRANT\:iOS/D\_REENTRANT\:WatchOS/' "./Configure"
@@ -134,4 +134,5 @@ elif [[ "${ARCH}" == "watchos_arm64_32" || "${ARCH}" == "watchos_armv7k" ]]; the
   # Remove source dir, add references to library files to relevant arrays
   # Keep reference to first build target for include file
   finish_build_loop
+
 done
