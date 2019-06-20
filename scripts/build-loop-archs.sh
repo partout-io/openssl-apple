@@ -43,6 +43,8 @@ do
     PLATFORM="MacOSX"
   elif [[ "${ARCH}" == "watchos_arm64_32" || "${ARCH}" == "watchos_armv7k" ]]; then
     PLATFORM="WatchOS"
+  elif [[ "${ARCH}" == "watchos_i386" ]]; then
+    PLATFORM="WatchSimulator"
   else
     PLATFORM="iPhoneOS"
   fi
@@ -82,6 +84,10 @@ do
     LOCAL_CONFIG_OPTIONS="${LOCAL_CONFIG_OPTIONS} -DHAVE_FORK=0 -mwatchos-version-min=${WATCHOS_MIN_SDK_VERSION}"
     echo "  Patching Configure..."
     LC_ALL=C sed -i -- 's/D\_REENTRANT\:iOS/D\_REENTRANT\:WatchOS/' "./Configure"
+  elif [[ "${PLATFORM}" == WatchSimulator* ]]; then
+    LOCAL_CONFIG_OPTIONS="${LOCAL_CONFIG_OPTIONS} -DHAVE_FORK=0 -mwatchos-version-min=${WATCHOS_MIN_SDK_VERSION}"
+    echo "  Patching Configure..."
+    LC_ALL=C sed -i -- 's/D\_REENTRANT\:iOS/D\_REENTRANT\:WatchOS/' "./Configure"
   elif [[ "${PLATFORM}" == MacOSX* ]]; then
     LOCAL_CONFIG_OPTIONS="${LOCAL_CONFIG_OPTIONS} -mmacosx-version-min=${MACOS_MIN_SDK_VERSION}"
   else
@@ -92,8 +98,10 @@ do
   LOCAL_CONFIG_OPTIONS="--openssldir=${TARGETDIR} ${LOCAL_CONFIG_OPTIONS}"
 
   # Determine configure target
-  if [ "${ARCH}" == "x86_64" ]; then
+  if [[ "${ARCH}" == "x86_64" ]]; then
     LOCAL_CONFIG_OPTIONS="darwin64-x86_64-cc no-asm ${LOCAL_CONFIG_OPTIONS}"
+  elif [[ "${ARCH}" == "watchos_i386" ]]; then
+    LOCAL_CONFIG_OPTIONS="darwin-i386-cc no-asm ${LOCAL_CONFIG_OPTIONS}"
   else
     LOCAL_CONFIG_OPTIONS="iphoneos-cross ${LOCAL_CONFIG_OPTIONS}"
   fi
@@ -102,7 +110,7 @@ do
   run_configure
 
   # Only required for Darwin64 builds (-isysroot is automatically added by iphoneos-cross target)
-  if [ "${ARCH}" == "x86_64" ]; then
+  if [[ "${ARCH}" == "x86_64" || "${ARCH}" == "watchos_i386" ]]; then
     echo "  Patching Makefile..."
     sed -ie "s!^CFLAG=!CFLAG=-isysroot ${CROSS_TOP}/SDKs/${CROSS_SDK} !" "Makefile"
   fi

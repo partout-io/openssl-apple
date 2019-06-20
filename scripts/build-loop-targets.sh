@@ -49,6 +49,8 @@ do
     PLATFORM="AppleTVOS"
   elif [[ "${TARGET}" == "macos"* ]]; then
     PLATFORM="MacOSX"
+  elif [[ "${TARGET}" == "watchos-sim-cross"* ]]; then
+    PLATFORM="WatchSimulator"
   elif [[ "${TARGET}" == "watchos"* ]]; then
     PLATFORM="WatchOS"
   else

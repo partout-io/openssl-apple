@@ -30,8 +30,8 @@ DEFAULTVERSION="1.1.0i"
 # Default (=full) set of architectures (OpenSSL <= 1.0.2) or targets (OpenSSL >= 1.1.0) to build
 #DEFAULTARCHS="ios_x86_64 ios_arm64 ios_armv7s ios_armv7 tv_x86_64 tv_arm64 mac_x86_64"
 #DEFAULTTARGETS="ios-sim-cross-x86_64 ios64-cross-arm64 ios-cross-armv7s ios-cross-armv7 tvos-sim-cross-x86_64 tvos64-cross-arm64 macos64-x86_64"
-DEFAULTARCHS="ios_x86_64 ios_arm64 tv_x86_64 tv_arm64 mac_x86_64 watchos_armv7k watchos_arm64_32"
-DEFAULTTARGETS="ios-sim-cross-x86_64 ios64-cross-arm64 tvos-sim-cross-x86_64 tvos64-cross-arm64 macos64-x86_64 watchos-cross-armv7k watchos-cross-arm64_32"
+DEFAULTARCHS="ios_x86_64 ios_arm64 tv_x86_64 tv_arm64 mac_x86_64 watchos_armv7k watchos_arm64_32 watchos_i386"
+DEFAULTTARGETS="ios-sim-cross-x86_64 ios64-cross-arm64 tvos-sim-cross-x86_64 tvos64-cross-arm64 macos64-x86_64 watchos-cross-armv7k watchos-cross-arm64_32 watchos-sim-cross-i386"
 
 # Minimum iOS/tvOS SDK version to build for
 MACOS_MIN_SDK_VERSION="10.11"
@@ -173,7 +173,7 @@ finish_build_loop()
     LIBSSL_TVOS+=("${TARGETDIR}/lib/libssl.a")
     LIBCRYPTO_TVOS+=("${TARGETDIR}/lib/libcrypto.a")
     OPENSSLCONF_SUFFIX="tvos_${ARCH}"
-  elif [[ "${PLATFORM}" == WatchOS* ]]; then
+  elif [[ "${PLATFORM}" == Watch* ]]; then
     LIBSSL_WATCHOS+=("${TARGETDIR}/lib/libssl.a")
     LIBCRYPTO_WATCHOS+=("${TARGETDIR}/lib/libcrypto.a")
     OPENSSLCONF_SUFFIX="watchos_${ARCH}"
@@ -505,7 +505,7 @@ else
   source "${SCRIPTDIR}/scripts/build-loop-targets.sh"
 fi
 
-# Build macOS library if selected for build
+#Build macOS library if selected for build
 if [ ${#LIBSSL_MACOS[@]} -gt 0 ]; then
   echo "Build library for macOS..."
   lipo -create ${LIBSSL_MACOS[@]} -output "${CURRENTPATH}/lib/libssl-MacOSX.a"
@@ -586,6 +586,9 @@ if [ ${#OPENSSLCONF_ALL[@]} -gt 1 ]; then
       ;;
       *_watchos_arm64_32.h)
         DEFINE_CONDITION="TARGET_OS_WATCHOS && TARGET_OS_EMBEDDED && TARGET_CPU_ARM64_32"
+      ;;
+      *_watchos_i386.h)
+        DEFINE_CONDITION="TARGET_OS_SIMULATOR && TARGET_CPU_X86"
       ;;
       *)
         # Don't run into unexpected cases by setting the default condition to false
