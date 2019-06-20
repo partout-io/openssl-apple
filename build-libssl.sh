@@ -588,7 +588,7 @@ if [ ${#OPENSSLCONF_ALL[@]} -gt 1 ]; then
         DEFINE_CONDITION="TARGET_OS_WATCHOS && TARGET_OS_EMBEDDED && TARGET_CPU_ARM64_32"
       ;;
       *_watchos_i386.h)
-        DEFINE_CONDITION="TARGET_OS_SIMULATOR && TARGET_CPU_X86"
+        DEFINE_CONDITION="TARGET_OS_SIMULATOR && TARGET_CPU_X86 || TARGET_OS_EMBEDDED"
       ;;
       *)
         # Don't run into unexpected cases by setting the default condition to false
