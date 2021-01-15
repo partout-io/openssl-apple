@@ -1,0 +1,69 @@
+name: Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag-name:
+        description: 'The name of the tag to create with the results of the build'
+        required: true
+  push:
+    branches: 
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Build archs
+      run: sh ./build-libssl.sh --cleanup
+
+    - name: Package XCFramework
+      run: sh ./create-openssl-framework.sh dynamic
+
+    - name: Zip XCFramework
+      run: ditto -c -k -X -rsrc --keepParent ./frameworks/openssl.xcframework ./frameworks/openssl.xcframework.zip
+
+    - name: Compute package checksum
+      run: |
+        checksum=$(swift package compute-checksum ./frameworks/openssl.xcframework.zip)
+        sed -i -E "s/\(checksum: \).*/\1\"$checksum\"/" Package.swift
+        rm -rf Package.swift-E
+
+    - name: Commit new package checksum
+      id: commit_checksum
+      if: ${{ github.event.inputs.tag-name != '' }}
+      run: |
+        git stage Package.swift
+        git commit -m "Update binary target checksum"
+        git push origin master
+
+        last_commit_sha=$(git rev-parse HEAD)
+        echo "::set-output name=last_commit_sha::$last_commit_sha"
+
+    - name: Create a Release
+      id: create_release
+      if: ${{ github.event.inputs.tag-name != '' }}
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.event.inputs.tag-name }}
+        commitish: ${{ steps.commit_checksum.outputs.last_commit_sha }}
+
+    - name: Upload Release Asset
+      id: upload-release-asset
+      if: ${{ github.event.inputs.tag-name != '' }}
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./frameworks/openssl.xcframework.zip
+        asset_name: openssl.xcframework.zip
+        asset_content_type: application/zip
