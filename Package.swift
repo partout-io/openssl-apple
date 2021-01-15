@@ -14,16 +14,12 @@ let package = Package(
             name: "GXOpenSSL",
             targets: ["OpenSSL"]),
     ],
-    dependencies: [
-        // Dependencies declare other packages that this package depends on.
-        // .package(url: /* package url */, from: "1.0.0"),
-    ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
 		.binaryTarget(
 			name: "OpenSSL",
-			url: "https://github.com/jechague/GXOpenSSL/releases/download/1.1.1i/openssl.xcframework.zip",
+			url: "",
 			checksum: "f6dbe0d398818561159b528909a48de4f2d71432d0b30b6ab80119f8e995e651"
 		)
     ]

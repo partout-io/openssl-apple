@@ -31,8 +31,15 @@ jobs:
 
     - name: Compute package checksum
       run: |
+        # Update checksum
         checksum=$(swift package compute-checksum ./frameworks/openssl.xcframework.zip)
         sed -i -E "s/\(checksum: \).*/\1\"$checksum\"/" Package.swift
+        
+        # Update download URL
+        url="https:\/\/github.com\/genexuslabs\/openssl-apple\/releases\/download\/${{ github.event.inputs.tag-name }}\/openssl.xcframework.zip"
+        sed -i -E "s/\(url: \).*/\1\"$url\",/" Package.swift
+
+        # Delete backup file
         rm -rf Package.swift-E
 
     - name: Commit new package checksum
