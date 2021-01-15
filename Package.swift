@@ -24,7 +24,7 @@ let package = Package(
 		.binaryTarget(
 			name: "OpenSSL",
 			url: "https://github.com/jechague/GXOpenSSL/releases/download/1.1.1i/openssl.xcframework.zip",
-			checksum: ""
+			checksum: "f6dbe0d398818561159b528909a48de4f2d71432d0b30b6ab80119f8e995e651"
 		)
     ]
 )
