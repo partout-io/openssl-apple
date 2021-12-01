@@ -78,9 +78,9 @@ jobs:
           git push && git push --tags
 
           RELEASE_NOTES="release-notes.txt"
-          echo "Compiled for iOS and macOS (plus Catalyst)." >>$RELEASE_NOTES
+          echo "Compiled for iOS and macOS (plus Catalyst)." >$RELEASE_NOTES
           echo >>$RELEASE_NOTES
-          echo "SwiftPM checksum: $CHECKSUM" >$RELEASE_NOTES
+          echo "SwiftPM checksum: $CHECKSUM" >>$RELEASE_NOTES
 
           echo "::set-output name=release_name::$RELEASE_NAME"
           echo "::set-output name=release_notes::$RELEASE_NOTES"
