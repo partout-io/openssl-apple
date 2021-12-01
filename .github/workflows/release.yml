@@ -18,18 +18,13 @@ jobs:
         id: lib
         timeout-minutes: 60
         run: |
-          TAG_NAME=`cat .version`
+          source scripts/get-openssl-version.sh
 
-          SCRIPT_NUM="${TAG_NAME#1.1.}"                   # 11200
-          PATCH_COMPOUND=$((SCRIPT_NUM / 100))            # 112
-          PATCH=$((PATCH_COMPOUND / 100))                 # 1
-          SUBPATCH_NUM=$((PATCH_COMPOUND - PATCH * 100))  # 12
-          SUBPATCH_ASCII=$((SUBPATCH_NUM + 96))           # 108
-          SUBPATCH_HEX=`printf '%x' $SUBPATCH_ASCII`      # 6c
-          SUBPATCH=`printf "\\x$SUBPATCH_HEX"`            # 'l'
+          COMPOUND_VERSION=`cat .version`
+          OPENSSL_VERSION=${COMPOUND_VERSION%-*}
+          SCRIPT_VERSION=${COMPOUND_VERSION#*-}
+          TAG_NAME=$(get_openssl_version $OPENSSL_VERSION $SCRIPT_VERSION)
 
-          OPENSSL_VERSION="1.1.$PATCH$SUBPATCH"
-          SCRIPT_VERSION=$((SCRIPT_NUM - PATCH_COMPOUND * 100))
           echo "Compiling OpenSSL $OPENSSL_VERSION"
           ./build-libssl.sh --version="$OPENSSL_VERSION" --targets="$OPENSSL_TARGETS" --disable-bitcode
 
