@@ -1,6 +1,9 @@
 #!/bin/bash
 function get_openssl_version() {
-    local std_version=$1
+  local std_version=$1
+  if [[ "$std_version" =~ 3.*.* ]]; then
+    echo $std_version
+  else
     local script_version=${2:-}
     local generic_version=${std_version%?}
     local subpatch=${std_version: -1}
@@ -9,4 +12,5 @@ function get_openssl_version() {
     script_version="$(printf '%02d' $script_version)"
     local normalized_version="${generic_version}${subpatch_number}${script_version}"
     echo $normalized_version
+  fi
 }
