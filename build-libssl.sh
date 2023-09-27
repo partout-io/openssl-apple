@@ -42,6 +42,7 @@ MACOS_MIN_SDK_VERSION="10.14"
 CATALYST_MIN_SDK_VERSION="10.14"
 WATCHOS_MIN_SDK_VERSION="4.0"
 TVOS_MIN_SDK_VERSION="12.0"
+XROS_MIN_SDK_VERSION="1.0"
 
 # Init optional env variables (use available variable or default to empty string)
 CURL_OPTIONS="${CURL_OPTIONS:-}"
@@ -60,6 +61,7 @@ echo_help()
   echo "     --catalyst-sdk=SDKVERSION     Override macOS SDK version for Catalyst"
   echo "     --watchos-sdk=SDKVERSION      Override watchOS SDK version"
   echo "     --tvos-sdk=SDKVERSION         Override tvOS SDK version"
+  echo "     --xros-sdk=SDKVERSION         Override xros SDK version"
   echo "     --min-ios-sdk=SDKVERSION      Set minimum iOS SDK version (default: $IOS_MIN_SDK_VERSION)"
   echo "     --min-macos-sdk=SDKVERSION    Set minimum macOS SDK version (default: $MACOS_MIN_SDK_VERSION)"
   echo "     --min-watchos-sdk=SDKVERSION  Set minimum watchOS SDK version (default: $WATCHOS_MIN_SDK_VERSION)"
@@ -180,6 +182,14 @@ finish_build_loop()
     else
       OPENSSLCONF_SUFFIX="ios_${ARCH}"
     fi
+  elif [[ "${PLATFORM}" == XR* ]]; then
+    LIBSSL_XROS+=("${TARGETDIR}/lib/libssl.a")
+    LIBCRYPTO_XROS+=("${TARGETDIR}/lib/libcrypto.a")
+    if [[ "${PLATFORM}" == XRSimulator* ]]; then
+      OPENSSLCONF_SUFFIX="xros_sim_${ARCH}"
+    else
+      OPENSSLCONF_SUFFIX="xros_${ARCH}"
+    fi
   elif [[ "${PLATFORM}" == Watch* ]]; then
     LIBSSL_WATCHOS+=("${TARGETDIR}/lib/libssl.a")
     LIBCRYPTO_WATCHOS+=("${TARGETDIR}/lib/libcrypto.a")
@@ -243,6 +253,7 @@ MACOS_SDKVERSION=""
 CATALYST_SDKVERSION=""
 WATCHOS_SDKVERSION=""
 TVOS_SDKVERSION=""
+XROS_SDKVERSION=""
 LOG_VERBOSE=""
 PARALLEL=""
 TARGETS=""
@@ -303,6 +314,10 @@ case $i in
     ;;
   --min-tvos-sdk=*)
     TVOS_MIN_SDK_VERSION="${i#*=}"
+    shift
+    ;;
+  --min-xros-sdk=*)
+    XROS_MIN_SDK_VERSION="${i#*=}"
     shift
     ;;
   --noparallel)
@@ -392,6 +407,9 @@ fi
 if [ ! -n "${TVOS_SDKVERSION}" ]; then
   TVOS_SDKVERSION=$(xcrun -sdk appletvos --show-sdk-version)
 fi
+if [ ! -n "${XROS_SDKVERSION}" ]; then
+  XROS_SDKVERSION=$(xcrun -sdk xros --show-sdk-version)
+fi
 
 # Truncate to minor version
 MINOR_VERSION=(${MACOS_SDKVERSION//./ })
@@ -446,6 +464,7 @@ echo "  macOS SDK: ${MACOS_SDKVERSION} (min ${MACOS_MIN_SDK_VERSION})"
 echo "  macOS SDK (Catalyst): ${CATALYST_SDKVERSION} (min ${CATALYST_MIN_SDK_VERSION})"
 echo "  watchOS SDK: ${WATCHOS_SDKVERSION} (min ${WATCHOS_MIN_SDK_VERSION})"
 echo "  tvOS SDK: ${TVOS_SDKVERSION} (min ${TVOS_MIN_SDK_VERSION})"
+echo "  xros SDK: ${XROS_SDKVERSION} (min ${XROS_MIN_SDK_VERSION})"
 if [ "${CONFIG_DISABLE_BITCODE}" == "true" ]; then
   echo "  Bitcode embedding disabled"
 fi
@@ -547,6 +566,8 @@ LIBSSL_WATCHOS=()
 LIBCRYPTO_WATCHOS=()
 LIBSSL_TVOS=()
 LIBCRYPTO_TVOS=()
+LIBSSL_XROS=()
+LIBCRYPTO_XROS=()
 
 source "${SCRIPTDIR}/scripts/build-loop-targets.sh"
 
@@ -615,6 +636,9 @@ if [ ${#OPENSSLCONF_ALL[@]} -gt 1 ]; then
       ;;
       *_tvos_sim_x86_64.h)
         DEFINE_CONDITION="TARGET_OS_TV && TARGET_OS_SIMULATOR && TARGET_CPU_X86_64"
+      ;;
+      *_xros_arm64.h)
+        DEFINE_CONDITION="TARGET_OS_XROS && TARGET_CPU_ARM64"
       ;;
       *)
         # Don't run into unexpected cases by setting the default condition to false

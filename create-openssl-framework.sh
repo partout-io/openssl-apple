@@ -153,6 +153,10 @@ if [ $FWTYPE == "dynamic" ]; then
             MIN_SDK="-watchos_version_min $MIN_SDK_VERSION"
         elif [[ $PLATFORM == WatchSimulator* ]]; then
             MIN_SDK="-watchos_simulator_version_min $MIN_SDK_VERSION"
+        elif [[ $PLATFORM == XRSimulator* ]]; then
+            MIN_SDK=""
+        elif [[ $PLATFORM == XR* ]]; then
+            MIN_SDK=""
         else
             MIN_SDK="-ios_version_min $MIN_SDK_VERSION"
         fi
