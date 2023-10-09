@@ -34,7 +34,7 @@ macos64-x86_64 macos64-arm64
 mac-catalyst-x86_64 mac-catalyst-arm64
 watchos-cross-armv7k watchos-cross-arm64_32 watchos-sim-cross-x86_64 watchos-sim-cross-i386 watchos-sim-cross-arm64
 tvos-sim-cross-x86_64 tvos64-cross-arm64
-xros-cross-arm64 xros-sim-cross-arm64 xros-sim-cross-x86_64
+xros-sim-cross-arm64 xros-cross-arm64
 TARGETS`
 
 # Minimum iOS/tvOS SDK version to build for
@@ -638,8 +638,11 @@ if [ ${#OPENSSLCONF_ALL[@]} -gt 1 ]; then
       *_tvos_sim_x86_64.h)
         DEFINE_CONDITION="TARGET_OS_TV && TARGET_OS_SIMULATOR && TARGET_CPU_X86_64"
       ;;
+      *_xros_sim_arm64.h)
+        DEFINE_CONDITION="TARGET_OS_VISION && TARGET_OS_SIMULATOR && TARGET_CPU_ARM64"
+      ;;
       *_xros_arm64.h)
-        DEFINE_CONDITION="TARGET_OS_XROS && TARGET_CPU_ARM64"
+        DEFINE_CONDITION="TARGET_OS_VISION && TARGET_CPU_ARM64"
       ;;
       *)
         # Don't run into unexpected cases by setting the default condition to false
