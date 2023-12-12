@@ -62,7 +62,7 @@ echo_help()
   echo "     --catalyst-sdk=SDKVERSION     Override macOS SDK version for Catalyst"
   echo "     --watchos-sdk=SDKVERSION      Override watchOS SDK version"
   echo "     --tvos-sdk=SDKVERSION         Override tvOS SDK version"
-  echo "     --xros-sdk=SDKVERSION         Override xros SDK version"
+  echo "     --xros-sdk=SDKVERSION         Override xrOS SDK version"
   echo "     --min-ios-sdk=SDKVERSION      Set minimum iOS SDK version (default: $IOS_MIN_SDK_VERSION)"
   echo "     --min-macos-sdk=SDKVERSION    Set minimum macOS SDK version (default: $MACOS_MIN_SDK_VERSION)"
   echo "     --min-watchos-sdk=SDKVERSION  Set minimum watchOS SDK version (default: $WATCHOS_MIN_SDK_VERSION)"
@@ -465,7 +465,7 @@ echo "  macOS SDK: ${MACOS_SDKVERSION} (min ${MACOS_MIN_SDK_VERSION})"
 echo "  macOS SDK (Catalyst): ${CATALYST_SDKVERSION} (min ${CATALYST_MIN_SDK_VERSION})"
 echo "  watchOS SDK: ${WATCHOS_SDKVERSION} (min ${WATCHOS_MIN_SDK_VERSION})"
 echo "  tvOS SDK: ${TVOS_SDKVERSION} (min ${TVOS_MIN_SDK_VERSION})"
-echo "  xros SDK: ${XROS_SDKVERSION} (min ${XROS_MIN_SDK_VERSION})"
+echo "  xrOS SDK: ${XROS_SDKVERSION} (min ${XROS_MIN_SDK_VERSION})"
 if [ "${CONFIG_DISABLE_BITCODE}" == "true" ]; then
   echo "  Bitcode embedding disabled"
 fi
