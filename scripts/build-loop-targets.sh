@@ -57,7 +57,7 @@ do
     PLATFORM="WatchOS"
   elif [[ "${TARGET}" == "tvos-sim-cross-"* ]]; then
     PLATFORM="AppleTVSimulator"
-  elif [[ "${TARGET}" == "tvos64-cross-"* ]]; then
+  elif [[ "${TARGET}" == "tvos-cross-"* ]]; then
     PLATFORM="AppleTVOS"
   elif [[ "${TARGET}" == "ios-sim-cross-"* ]]; then
     PLATFORM="iPhoneSimulator"
