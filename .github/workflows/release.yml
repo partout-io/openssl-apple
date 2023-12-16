@@ -16,8 +16,6 @@ jobs:
       - name: Build OpenSSL
         id: lib
         timeout-minutes: 60
-        env:
-          OPENSSL_TARGETS: "ios-sim-cross-x86_64 ios-sim-cross-arm64 ios64-cross-arm64 ios64-cross-arm64e macos64-x86_64 macos64-arm64 mac-catalyst-x86_64 mac-catalyst-arm64 tvos-sim-cross-x86_64 tvos64-cross-arm64"
         run: |
           source scripts/get-openssl-version.sh
 
@@ -27,7 +25,7 @@ jobs:
           TAG_NAME=$(get_openssl_version $OPENSSL_VERSION $SCRIPT_VERSION)
 
           echo "Compiling OpenSSL $OPENSSL_VERSION"
-          ./build-libssl.sh --version="$OPENSSL_VERSION" --targets="$OPENSSL_TARGETS" --disable-bitcode
+          ./build-libssl.sh --cleanup --version="$OPENSSL_VERSION"
 
           echo "tag=$TAG_NAME" >> $GITHUB_OUTPUT
           echo "openssl_version=$OPENSSL_VERSION" >> $GITHUB_OUTPUT
@@ -78,11 +76,6 @@ jobs:
           git tag "$TAG_NAME" -m "$RELEASE_NAME"
           git push && git push --tags
 
-          RELEASE_NOTES="release-notes.txt"
-          echo "Compiled for iOS and macOS (plus Catalyst)." >$RELEASE_NOTES
-          echo >>$RELEASE_NOTES
-          echo "SwiftPM checksum: $CHECKSUM" >>$RELEASE_NOTES
-
           echo "release_name=$RELEASE_NAME" >> $GITHUB_OUTPUT
           echo "release_notes=$RELEASE_NOTES" >> $GITHUB_OUTPUT
           echo "checksum=$PACKAGE_CHECKSUM" >> $GITHUB_OUTPUT
@@ -90,8 +83,8 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           name: ${{ steps.package.outputs.release_name }}
-          body_path: ${{ steps.package.outputs.release_notes }}
           tag_name: ${{ steps.lib.outputs.tag }}
+          generate_release_notes: true
           files: |
             ${{ steps.framework.outputs.artifact }}
             ${{ steps.package.outputs.checksum }}
