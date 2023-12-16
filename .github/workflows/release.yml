@@ -25,7 +25,7 @@ jobs:
           TAG_NAME=$(get_openssl_version $OPENSSL_VERSION $SCRIPT_VERSION)
 
           echo "Compiling OpenSSL $OPENSSL_VERSION"
-          ./build-libssl.sh --cleanup --version="$OPENSSL_VERSION" --disable-bitcode
+          ./build-libssl.sh --cleanup --version="$OPENSSL_VERSION"
 
           echo "tag=$TAG_NAME" >> $GITHUB_OUTPUT
           echo "openssl_version=$OPENSSL_VERSION" >> $GITHUB_OUTPUT
