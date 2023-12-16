@@ -12,5 +12,8 @@ function get_openssl_version() {
     echo $normalized_version
     return
   fi
-  echo "${std_version}${script_version}"
+  local minor_version="${std_version%.*}"
+  local patch_version="${std_version##*.}"
+  local normalized_patch_version=$((($patch_version + 1) * 100 + $script_version))
+  echo "${minor_version}.${normalized_patch_version}"
 }
