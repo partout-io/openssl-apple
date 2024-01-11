@@ -17,3 +17,4 @@ swiftpm
 *.xcodeproj/project.xcworkspace
 *.xcodeproj/xcuserdata
 Pods
+parse-version.sh
