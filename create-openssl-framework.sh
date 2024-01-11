@@ -17,7 +17,7 @@ if [ -d $FWROOT ]; then
 fi
 
 #ALL_SYSTEMS=("iPhone" "AppleTV" "MacOSX" "Catalyst" "Watch")
-ALL_SYSTEMS=("iPhoneOS" "iPhoneSimulator" "AppleTVOS" "AppleTVSimulator" "MacOSX" "Catalyst" "WatchOS" "WatchSimulator")
+ALL_SYSTEMS=("iPhoneOS" "iPhoneSimulator" "AppleTVOS" "AppleTVSimulator" "MacOSX" "Catalyst" "WatchOS" "WatchSimulator" "XROS" "XRSimulator")
 
 # Inspect Mach-O load commands to get minimum SDK version.
 #
@@ -123,6 +123,10 @@ for TARGETDIR in `ls -d *.sdk`; do
         MIN_SDK="-platform_version watchos $MIN_SDK_VERSION $SDKVERSION"
     elif [[ $PLATFORM == WatchSimulator* ]]; then
         MIN_SDK="-platform_version watchos-simulator $MIN_SDK_VERSION $SDKVERSION"
+    elif [[ $PLATFORM == XRSimulator* ]]; then
+        MIN_SDK="-platform_version xros-simulator $MIN_SDK_VERSION $SDKVERSION"
+    elif [[ $PLATFORM == XR* ]]; then
+        MIN_SDK="-platform_version xros $MIN_SDK_VERSION $SDKVERSION"
     else
         MIN_SDK="-platform_version ios $MIN_SDK_VERSION $SDKVERSION"
     fi

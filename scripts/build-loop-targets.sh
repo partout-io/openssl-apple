@@ -30,6 +30,8 @@ do
     SDKVERSION="${WATCHOS_SDKVERSION}"
   elif [[ "${TARGET}" == tvos* ]]; then
     SDKVERSION="${TVOS_SDKVERSION}"
+  elif [[ "${TARGET}" == xr* ]]; then
+    SDKVERSION="${XROS_SDKVERSION}"
   else
     SDKVERSION="${IOS_SDKVERSION}"
   fi
@@ -41,6 +43,7 @@ do
   export CATALYST_MIN_SDK_VERSION
   export WATCHOS_MIN_SDK_VERSION
   export TVOS_MIN_SDK_VERSION
+  export XROS_MIN_SDK_VERSION
   export CONFIG_DISABLE_BITCODE
 
   # Determine platform
@@ -61,6 +64,10 @@ do
     PLATFORM="AppleTVOS"
   elif [[ "${TARGET}" == "ios-sim-cross-"* ]]; then
     PLATFORM="iPhoneSimulator"
+  elif [[ "${TARGET}" == "xros-sim-cross"* ]]; then
+    PLATFORM="XRSimulator"
+  elif [[ "${TARGET}" == "xros"* ]]; then
+    PLATFORM="XROS"
   else
     PLATFORM="iPhoneOS"
   fi
