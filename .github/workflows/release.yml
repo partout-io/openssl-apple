@@ -36,7 +36,7 @@ jobs:
           FRAMEWORK_DIR: "frameworks"
           FRAMEWORK: "openssl.xcframework"
         run: |
-          ./create-openssl-framework.sh dynamic
+          ./create-openssl-framework.sh
           ( cd $FRAMEWORK_DIR && zip -yr $FRAMEWORK.zip $FRAMEWORK )
 
           echo "artifact=$FRAMEWORK_DIR/$FRAMEWORK.zip" >> $GITHUB_OUTPUT
