@@ -488,14 +488,14 @@ if [ ! -e ${OPENSSL_ARCHIVE_FILE_NAME} ]; then
 
   # Check whether file exists here (this is the location of the latest version for each branch)
   # -s be silent, -f return non-zero exit status on failure, -I get header (do not download)
-  curl ${CURL_OPTIONS} -sfI "${OPENSSL_ARCHIVE_URL}" > /dev/null
+  curl ${CURL_OPTIONS} -sfIL "${OPENSSL_ARCHIVE_URL}" > /dev/null
 
   # If unsuccessful, update the URL for older versions and try again.
   if [ $? -ne 0 ]; then
     BRANCH=$(echo "${VERSION}" | grep -Eo '^[0-9]\.[0-9]\.[0-9]')
     OPENSSL_ARCHIVE_URL="https://www.openssl.org/source/old/${BRANCH}/${OPENSSL_ARCHIVE_FILE_NAME}"
 
-    curl ${CURL_OPTIONS} -sfI "${OPENSSL_ARCHIVE_URL}" > /dev/null
+    curl ${CURL_OPTIONS} -sfIL "${OPENSSL_ARCHIVE_URL}" > /dev/null
   fi
 
   # Both attempts failed, so report the error
@@ -507,9 +507,9 @@ if [ ! -e ${OPENSSL_ARCHIVE_FILE_NAME} ]; then
 
   # Archive was found, so proceed with download.
   # -O Use server-specified filename for download
-  curl ${CURL_OPTIONS} -O "${OPENSSL_ARCHIVE_URL}"
+  curl ${CURL_OPTIONS} -OL "${OPENSSL_ARCHIVE_URL}"
   # also download the gpg signature from the same location
-  curl ${CURL_OPTIONS} -O "${OPENSSL_ARCHIVE_URL}${OPENSSL_ARCHIVE_SIGNATURE_FILE_EXT}"
+  curl ${CURL_OPTIONS} -OL "${OPENSSL_ARCHIVE_URL}${OPENSSL_ARCHIVE_SIGNATURE_FILE_EXT}"
 
 else
   echo "Using ${OPENSSL_ARCHIVE_FILE_NAME}"
