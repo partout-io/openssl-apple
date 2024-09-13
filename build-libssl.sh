@@ -490,6 +490,13 @@ if [ ! -e ${OPENSSL_ARCHIVE_FILE_NAME} ]; then
   # -s be silent, -f return non-zero exit status on failure, -I get header (do not download)
   curl ${CURL_OPTIONS} -sfIL "${OPENSSL_ARCHIVE_URL}" > /dev/null
 
+  # If unsuccessful, use the GitHub URL for newer versions and try again.
+  if [ $? -ne 0 ]; then
+    OPENSSL_ARCHIVE_URL="https://github.com/openssl/openssl/releases/download/${OPENSSL_ARCHIVE_BASE_NAME}/${OPENSSL_ARCHIVE_FILE_NAME}"
+
+    curl ${CURL_OPTIONS} -sfIL "${OPENSSL_ARCHIVE_URL}" > /dev/null
+  fi
+
   # If unsuccessful, update the URL for older versions and try again.
   if [ $? -ne 0 ]; then
     BRANCH=$(echo "${VERSION}" | grep -Eo '^[0-9]\.[0-9]\.[0-9]')
