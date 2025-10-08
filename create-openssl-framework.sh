@@ -135,9 +135,6 @@ for TARGETDIR in `ls -d *.sdk`; do
     CROSS_SDK="${PLATFORM}${SDKVERSION}.sdk"
     SDK="${CROSS_TOP}/SDKs/${CROSS_SDK}"
 
-    #cd $TARGETDIR
-    #libtool -dynamic -lSystem $MIN_SDK -syslibroot $SDK -install_name $INSTALL_NAME -compatibility_version $COMPAT_VERSION -current_version $CURRENT_VERSION lib/*.a -o $FWNAME.dylib
-
     TARGETOBJ="${TARGETDIR}/obj"
     rm -rf $TARGETOBJ
     mkdir $TARGETOBJ
