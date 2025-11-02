@@ -3,11 +3,17 @@ source scripts/get-openssl-version.sh
 
 set -euo pipefail
 
+if [ $# == 0 ]; then
+    echo "Usage: `basename $0` static|dynamic"
+    exit 1
+fi
+
 if [ ! -d lib ]; then
     echo "Please run build-libssl.sh first!"
     exit 1
 fi
 
+FWTYPE=$1
 FWNAME=openssl
 FWROOT=frameworks
 
@@ -89,7 +95,7 @@ function get_openssl_version_from_file() {
     echo $(get_openssl_version $std_version)
 }
 
-if true; then
+if [ $FWTYPE == "dynamic" ]; then
     DEVELOPER=`xcode-select -print-path`
     FW_EXEC_NAME="${FWNAME}.framework/${FWNAME}"
     INSTALL_NAME="@rpath/${FW_EXEC_NAME}"
@@ -184,7 +190,32 @@ if true; then
 
     rm bin/*/$FWNAME.dylib
 else
-    # FIXME: static
+    for SYS in ${ALL_SYSTEMS[@]}; do
+        SYSDIR="$FWROOT/$SYS"
+        FWDIR="$SYSDIR/$FWNAME.framework"
+        LIBS_CRYPTO=(bin/${SYS}*/lib/libcrypto.a)
+        LIBS_SSL=(bin/${SYS}*/lib/libssl.a)
+
+        if [[ ${#LIBS_CRYPTO[@]} -gt 0 && -e ${LIBS_CRYPTO[0]} && ${#LIBS_SSL[@]} -gt 0 && -e ${LIBS_SSL[0]} ]]; then
+            echo "Creating framework for $SYS"
+            mkdir -p $FWDIR/lib
+            lipo -create ${LIBS_CRYPTO[@]} -output $FWDIR/lib/libcrypto.a
+            lipo -create ${LIBS_SSL[@]} -output $FWDIR/lib/libssl.a
+            libtool -static -o $FWDIR/$FWNAME $FWDIR/lib/*.a
+            rm -rf $FWDIR/lib
+            mkdir -p $FWDIR/Headers
+            cp -r include/$FWNAME/* $FWDIR/Headers/
+            cp -L assets/$SYS/Info.plist $FWDIR/Info.plist
+            MIN_SDK_VERSION=$(get_min_sdk "$FWDIR/$FWNAME")
+            OPENSSL_VERSION=$(get_openssl_version_from_file "$FWDIR/Headers/opensslv.h")
+            sed -e "s/\\\$(MIN_SDK_VERSION)/$MIN_SDK_VERSION/g" \
+                -e "s/\\\$(OPENSSL_VERSION)/$OPENSSL_VERSION/g" \
+                -i '' "$FWDIR/Info.plist"
+            echo "Created $FWDIR"
+        else
+            echo "Skipped framework for $SYS"
+        fi
+    done
 fi
 
 # macOS and Catalyst symlinks
