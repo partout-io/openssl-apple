@@ -19,7 +19,7 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "openssl",
-            url: "https://github.com/passepartoutvpn/openssl-apple/releases/download/\(version)/\(filename)",
+            url: "https://github.com/partout-io/openssl-apple/releases/download/\(version)/\(filename)",
             checksum: checksum
         ),
 
